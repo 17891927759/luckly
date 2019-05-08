@@ -1,0 +1,40 @@
+spring:
+  application:
+    name:  ${project.artifactId}
+server:
+  error:
+    path: /error
+  port: 8080
+eureka:
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.cloud.client.ip-address}:${spring.application.name}:${server.port}
+    # 服务过期时间配置,超过这个时间没有接收到心跳EurekaServer就会将这个实例剔除
+    lease-expiration-duration-in-seconds: 15
+    # 服务刷新时间配置，每隔这个时间会主动心跳一次
+    lease-renewal-interval-in-seconds: 10
+  client:
+        register-with-eureka: true
+        fetch-registry: true
+        use-dns-for-fetching-service-urls: true
+        eureka-server-d-n-s-name: zts.local
+        region: shanghai
+        eureka-server-u-r-l-context: eureka
+                eureka-server-port: 8081
+        prefer-same-zone-eureka: true
+info:
+  app:
+    name: "@project.name@"
+    description: "@project.description@"
+    version: "@project.version@"
+
+management:
+  endpoints:
+#    web:
+#      exposure:
+#        include: '*'
+        endpoint:
+    health:
+            show-details: always
+#    shutdown:
+#      enabled: true

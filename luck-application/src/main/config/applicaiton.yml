@@ -1,0 +1,9 @@
+#app:
+#  id: zuul-gateway
+#apollo:
+#  meta: http://10.29.183.62:8080,http://10.29.183.78:8080,http://10.29.183.104:8080
+#  bootstrap:
+#    # will inject 'application' namespace in bootstrap phase
+#    enabled: true
+#    # will inject 'application' and 'NFD.eureka.client' namespaces in bootstrap phase
+#    namespaces: application,NFD.eureka.client
