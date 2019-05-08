@@ -6,10 +6,13 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="login-application" />
         <module name="luck-application" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="login" target="1.8" />
+      <module name="login-application" target="1.5" />
       <module name="luck" target="1.8" />
       <module name="luck-application" target="1.8" />
     </bytecodeTargetLevel>

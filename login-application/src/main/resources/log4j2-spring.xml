@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Properties>
+        <Property name="LOG_EXCEPTION_CONVERSION_WORD">%xwEx</Property>
+        <Property name="LOG_LEVEL_PATTERN">%5p</Property>
+        <Property name="LOG_DATEFORMAT_PATTERN">yyyy-MM-dd HH:mm:ss.SSS</Property>
+        <Property name="CONSOLE_LOG_PATTERN">%clr{%d{${LOG_DATEFORMAT_PATTERN}}}{faint} %clr{${LOG_LEVEL_PATTERN}} %clr{%pid}{magenta} %clr{---}{faint} %clr{[%15.15t]}{faint} %clr{%-40.40c{1.}}{cyan} %clr{:}{faint} %m%n${sys:LOG_EXCEPTION_CONVERSION_WORD}</Property>
+        <Property name="FILE_LOG_PATTERN">%d{${LOG_DATEFORMAT_PATTERN}} ${LOG_LEVEL_PATTERN} %pid --- [%t] %-40.40c{1.} : %m%n${sys:LOG_EXCEPTION_CONVERSION_WORD}</Property>
+
+        <!--<property name="LOG_FILE" value="${LOG_FILE:-${LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}/}zuul.log}"/>-->
+        <Property name="APP_NAME">login-application</Property>
+        <Property name="BASE_PATH">/data/logCenter</Property>
+        <Property name="LOG_FILE_NAME">${BASE_PATH}/${APP_NAME}.log</Property>
+        <Property name="LOG_FILE_PATTERN">${BASE_PATH}/${APP_NAME}-%d{yyyyMMddHH}-%i.log</Property>
+        <Property name="LOG_DATE_PATTERN">yyyy-MM-dd HH:mm:ss.SSS</Property>
+        <Property name="LOG_CENTER_LOG_PATTERN">%d{${LOG_DATE_PATTERN}} ${LOG_LEVEL_PATTERN} [${APP_NAME}] --- %pid [%t] %-40.40c{1.} : %m%n${sys:LOG_EXCEPTION_CONVERSION_WORD}</Property>
+
+        <!--Error log-->
+        <Property name="ERROR_LOG_FILE_NAME">${BASE_PATH}/${APP_NAME}/error.log</Property>
+        <Property name="ERROR_LOG_FILE_PATTERN">${BASE_PATH}/${APP_NAME}/error-%d{yyyyMMddHH}-%i.log</Property>
+    </Properties>
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT" follow="true">
+            <PatternLayout pattern="${sys:CONSOLE_LOG_PATTERN}"/>
+        </Console>
+
+        <RollingFile name="ErrorLog" append="true" fileName="${ERROR_LOG_FILE_NAME}"
+                     filePattern="${ERROR_LOG_FILE_PATTERN}">
+            <Filters>
+                <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+            <PatternLayout>
+                <Pattern>${LOG_CENTER_LOG_PATTERN}</Pattern>
+            </PatternLayout>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="128 MB"/>
+                <TimeBasedTriggeringPolicy/>
+            </Policies>
+            <DefaultRolloverStrategy fileIndex="nomax">
+                <Delete basePath="${BASE_PATH}/${APP_NAME}/">
+                    <IfFileName glob="error*.log"/>
+                    <IfLastModified age="30d"/>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+
+        <RollingFile name="logCenter" append="true" fileName="${LOG_FILE_NAME}"
+                     filePattern="${LOG_FILE_PATTERN}">
+            <PatternLayout>
+                <Pattern>${LOG_CENTER_LOG_PATTERN}</Pattern>
+            </PatternLayout>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="128 MB"/>
+                <TimeBasedTriggeringPolicy/>
+            </Policies>
+            <DefaultRolloverStrategy fileIndex="nomax">
+                <Delete basePath="${BASE_PATH}">
+                    <IfFileName glob="${APP_NAME}*.log"/>
+                    <IfLastModified age="30d"/>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+    </Appenders>
+
+    <Loggers>
+        <Root level="info">
+            <AppenderRef ref="logCenter"/>
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="ErrorLog"/>
+        </Root>
+
+        <logger name="org.springframework" level="info" additivity="false">
+            <appender-ref ref="Console"/>
+            <AppenderRef ref="logCenter"/>
+        </logger>
+
+        <logger name="org.springframework.boot" level="info" additivity="false">
+            <appender-ref ref="Console"/>
+            <AppenderRef ref="logCenter"/>
+        </logger>
+    </Loggers>
+</Configuration>
