@@ -121,5 +121,6 @@
 
   <modules>
     <module>luck-application</module>
+      <module>login-application</module>
   </modules>
 </project>
